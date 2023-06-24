@@ -1,5 +1,6 @@
-// TODO
-// - importar chao.js
+import Jogador from './jogador.js';
+import chao from './chao.js';
+
 let start;
 const cenario = {
     background: 'background',
@@ -16,11 +17,20 @@ export default class CenaCarregamento extends Phaser.Scene {
     }
 
     preload() {
-        
-        this.load.image(cenario.background, 'images/background-day.png'); // Carrega imagem do cenário
+
+        // Pré-carregar os recursos
+        this.load.image(cenario.background, 'images/background-day.png'); // Cenário
         // TODO
-        // - Alterar para imagem com novo personagem
-        this.load.image(cenario.start, 'images/message-initial.png'); 
+        // - Alterar para imagem inicial com novo personagem
+        this.load.image(cenario.start, 'images/message-initial.png'); // Mensagem inicial
+        this.load.spritesheet('jogador', 'images/bird-red-sprite.png', {
+            frameWidth: 34,
+            frameHeight: 24
+        });
+        this.load.spritesheet('chao', 'images/ground.png', {
+            frameWidth: 336,
+            frameHeight: 112
+        });
 
 
     }
@@ -38,7 +48,8 @@ export default class CenaCarregamento extends Phaser.Scene {
         // - Mover a visibilidade para o local adequado
         // start.setVisible(false); // -->> Desabilita a visibilidade da mensagem inicial
 
-        
+        // Para testar se aparece
+        this.jogador = new Jogador(this);
     
     }
 
@@ -46,5 +57,7 @@ export default class CenaCarregamento extends Phaser.Scene {
         // TODO
         // - Lógica para início da cena de Jogo
         // - Desativar a visibilidade da mensagem inicial 
+
+        
     }
 }
