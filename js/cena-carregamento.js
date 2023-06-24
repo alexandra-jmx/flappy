@@ -1,6 +1,11 @@
 // TODO
 // - importar chao.js
 let start;
+const cenario = {
+    background: 'background',
+    start: 'mensagem-inicial',
+    width: 144
+}
 
 export default class CenaCarregamento extends Phaser.Scene {     
     
@@ -12,10 +17,10 @@ export default class CenaCarregamento extends Phaser.Scene {
 
     preload() {
         
-        this.load.image('fundo-dia', 'images/background-day.png');
+        this.load.image(cenario.background, 'images/background-day.png'); // Carrega imagem do cenário
         // TODO
         // - Alterar para imagem com novo personagem
-        this.load.image('start', 'images/message-initial.png');
+        this.load.image(cenario.start, 'images/message-initial.png'); 
 
 
     }
@@ -23,10 +28,12 @@ export default class CenaCarregamento extends Phaser.Scene {
 
     create() {
         // Posiciona utilizando a metade das dimensões do jogo
-        const larguraJogo = (this.sys.canvas.width/2);
-        const alturaJogo = (this.sys.canvas.height/2);
-        const fundoDia = this.add.image((larguraJogo), (alturaJogo), 'fundo-dia'); 
-        start = this.add.image((larguraJogo), (alturaJogo), 'start');
+        //const larguraJogo = (this.sys.canvas.width/2); 
+        const alturaJogo = (this.sys.canvas.height/2)
+        
+        //
+        this.add.image(cenario.width, (alturaJogo), 'background'); 
+        start = this.add.image(cenario.width, (alturaJogo), 'mensagem-inicial');
         // TODO
         // - Mover a visibilidade para o local adequado
         // start.setVisible(false); // -->> Desabilita a visibilidade da mensagem inicial
