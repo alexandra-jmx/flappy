@@ -1,6 +1,7 @@
 import CenaCarregamento from './cena-carregamento.js';
 import CenaJogo from './cena-jogo.js';
 
+
 const config = {
     type: Phaser.AUTO,
     width: 288,
