@@ -23,6 +23,7 @@ const config = {
 /** Variáveis */
 const cenario = {
     background: 'background',
+    chao: 'ground',
     width: 144, //metade da largura do jogo
     height: 256 // metade da altura do jogo para auxiliar no posicionamento
 };
@@ -57,9 +58,19 @@ const elementos = {
         restart: 'restart-button',
     }
 }
+const animacoes = {
+    chao: {
+        movendo: 'chao-movendo',
+        parado: 'chao-parado'
+    }
+    //personagem: {}
+}
 
 // Elementos
 let fundoDia;
+let chao
+let mensagemInicial;
+let mensagemFinal;
 let contador;
 let grupoContador;
 
@@ -67,8 +78,6 @@ let grupoContador;
 let start;
 let inicioJogo;
 let finalJogo;
-let mensagemInicial;
-let mensagemFinal;
 let restart;
 
 
@@ -81,21 +90,23 @@ const jogo = new Phaser.Game(config);
  *  - Carregar imagens:
  *      - Mensagem inicial
  *      - Fundo (background)
- *      - Chão -> Pendente 
+ *      - Chão -> Pendente  (por enquanto sem animação)
  *      - Personagem -> Pendente de ajustes
  *      - Tubo vermelho
  *      - Especiais -> Talves precise de ajustes. Não sei se não seria melhor usar como sprite também
  *      - Mensagem final (end game)
  *      - Botão de restart 
  * Create
- *  - 
+ *  - Fundo
+ *  - Mensagem inicial
+ *  - Chao (pendente)
  * Update
  */
 
 function preload() {
     // Fundo e chão
     this.load.image(cenario.background, 'images/background-day.png');
-    this.load.spritesheet('chao', 'images/ground.png', {
+    this.load.spritesheet(cenario.chao, 'images/ground.png', {
         frameWidth: 336,
         frameHeight: 112
     }); 
@@ -114,18 +125,18 @@ function preload() {
     * - Alterar os nomes em TODOS os lugares hehe 
     */
    /*
-   this.load.spritesheet('jogador', 'images/bird-red-sprite_original.png', {
+   this.load.spritesheet('jogador', 'images/vivi-boy.png', {
        frameWidth: 34,
        frameHeight: 24
    });
-   
+   */
    
     // Chão
-    this.load.spritesheet(cenario.background, 'images/ground-sprite.png', {
+    this.load.spritesheet(cenario.chao, 'images/ground.png', {
         frameWidth: 336,
         frameHeight: 112
     })
-
+/*
     // Tubo
     this.load.image(elementos.obstaculos.tubo.vermelho.bottom, 'images/pipe-red-bottom.png');
     this.load.image(elementos.obstaculos.tubo.vermelho.top, 'images/pipe-red-top.png');
@@ -158,7 +169,10 @@ function preload() {
 function create() {
     fundoDia = this.add.image(cenario.width, cenario.height, cenario.background).setInteractive(); // Serve para deixar o fundo interativo, vai auxiliar na hora de clicar para iniciar o jogo
     mensagemInicial = this.add.image(cenario.width, cenario.height, elementos.inicial);
-    
+
+    chao = this.physics.add.sprite(cenario.width, 458, cenario.chao);
+    chao.setCollideWorldBounds(true); // impede que o chão deixe de aparecer na tela
+    chao.setDepth(10) // Determina a profundidade dos elementos
      
 
 // VOcê está aqui -> fim da função create    
