@@ -29,8 +29,22 @@ const elementos = {
     especiais: {
         junkFood: 'junk-food',
         healthyFood: 'healthy-food'
+    },
+    fimJogo: {
+        gameOver: 'game-over',
+        restart: 'restar-button',
     }
 }
+
+// Elementos
+let contador;
+let grupoContador;
+
+// Ações
+let inicioJogo;
+let finalJogo;
+let mensagemFinal;
+let restart;
 
 export default class CenaJogo extends Phaser.Scene {
     constructor() {
@@ -41,6 +55,7 @@ export default class CenaJogo extends Phaser.Scene {
    
 
     preload() {
+        /*
         // Obstaculos
        this.load.image(elementos.obstaculos.tubo.vermelho.bottom, 'pipe-red-bottom.png');
        this.load.image(elementos.obstaculos.tubo.vermelho.top, 'pipe-red-top.png');
@@ -57,11 +72,12 @@ export default class CenaJogo extends Phaser.Scene {
         this.load.image(elementos.contador.numero8, 'images/number8.png');
         this.load.image(elementos.contador.numero9, 'images/number9.png');
 
-        // Elementos speciais
+        // Elementos especiais
         /* Ainda não criei as imagens
         this.load.image(elementos.especiais.junkFood, 'images/junk-food');
         this.load.image(elementos.especiais.healthyFood, 'images/healthy-food');
         */
+
 
     }
 
@@ -69,7 +85,7 @@ export default class CenaJogo extends Phaser.Scene {
     // TODO
     // - Obstáculos
     // - Score
-
+        grupoContador = this.physics.add.staticGroup()
 
     }
 

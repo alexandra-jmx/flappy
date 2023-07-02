@@ -18,6 +18,7 @@ export default class CenaCarregamento extends Phaser.Scene {
 
     preload() {
 
+        /*
         // Pré-carregar os recursos
         this.load.image(cenario.background, 'images/background-day.png'); // Cenário
         // TODO
@@ -30,11 +31,12 @@ export default class CenaCarregamento extends Phaser.Scene {
             frameHeight: 24
         });
 
+        /* Migrado
         // Chão
         this.load.spritesheet('chao', 'images/ground.png', {
             frameWidth: 336,
             frameHeight: 112
-        }); 
+        }); */ 
         
 
 
@@ -42,8 +44,7 @@ export default class CenaCarregamento extends Phaser.Scene {
 
 
     create() {
-            // Posiciona utilizando a metade das dimensões do jogo
-        //const larguraJogo = (this.sys.canvas.width/2); -> Não precisa mais 
+        // Posiciona utilizando a metade das dimensões do jogo
         const alturaJogo = (this.sys.canvas.height/2)
         
         // Cenário
@@ -56,8 +57,7 @@ export default class CenaCarregamento extends Phaser.Scene {
         // Chão
         this.ground = new Chao(this); // opaaaa, vencedor
 
-        // Jogar (sem sucesso) ->> possivelmente não está funcionando pq a imagem dos passáros tem os 3 e precisaria trabalhar melhor isso
-        // Como pretendo alterar depois a a imagem, vou utilizar a imagem do Tutorial do Slime no lugar por enquanto
+        // Jogar (sem sucesso)
         this.player = new Jogador(this);
         
         
@@ -75,5 +75,25 @@ export default class CenaCarregamento extends Phaser.Scene {
 
         //this.ground.chao.sprite.anims.play(ground.animacoes.movendo);
         
+        //Para iniciar o jogo
+        this.load.on('progress', (value) => {
+            console.log(value*100 + ' %');
+        });
+
+        this.load.on('complete', () => {
+            this.scene.start('CenaJogo');
+        });
+
+        /*Testar essa aqui também
+        this.bg.on('pointerdown', () => {
+            this.gameStarted ? this.jump() : this.startGame();
+        
+        Fazendo assim: 
+        this.cenario.background.on('pointerdown', () => {
+            this.scene.start('CenaJogo');
+        Ficou com a tela preta :( Tentei asssim originalmente
+
+
+        */
     }
 }

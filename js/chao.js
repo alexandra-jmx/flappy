@@ -13,7 +13,7 @@ export default class Chao extends Phaser.Physics.Arcade.Sprite{
 
     this.sprite = cena.physics.add.sprite(144, 458, 'chao');
     this.sprite.setCollideWorldBounds(true); // impede que o chão deixe de aparecer na tela
-    this.sprite.setDepth(10) // não entendi muito bem a função. 
+    this.sprite.setDepth(10) // Determina a profundidade dos elementos
 
     // TODO
     // Animção

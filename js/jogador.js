@@ -9,7 +9,7 @@ export default class Jogador extends Phaser.Physics.Arcade.Sprite{
         //this.cena = cena;
         this.sprite = cena.physics.add.sprite(60, 303, 'jogador'); // 265
         this.sprite.setBounce(0.2); // Parâmetro que faz o personagem quicar
-        //this.sprite.setCollideWorldBounds(true); // impede que a sprite do jogador saia da tela
+        this.sprite.setCollideWorldBounds(true); // impede que a sprite do jogador saia da tela
         this.sprite.body.allowGravity = false;
 
     // TODO 
