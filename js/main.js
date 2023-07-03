@@ -80,8 +80,8 @@ let grupoContador;
 // Ações
 let start;
 let clique;
-let inicioJogo;
-let finalJogo;
+let jogoIniciado;
+let jogoTerminado;
 let restart;
 
 
@@ -95,7 +95,7 @@ const jogo = new Phaser.Game(config);
  *      - Mensagem inicial
  *      - Fundo (background)
  *      - Chão -> Pendente  (por enquanto sem animação)
- *      - Personagem -> Pendente de ajustes
+ *      - Personagem -> Pendente de ajustes -> mudança do personagem
  *      - Tubo vermelho
  *      - Especiais -> Talves precise de ajustes. Não sei se não seria melhor usar como sprite também
  *      - Mensagem final (end game)
@@ -104,7 +104,11 @@ const jogo = new Phaser.Game(config);
  *  - Fundo
  *  - Mensagem inicial
  *  - Chao (animação pendente)
+ *  - Personagem (fixo)
  * Update
+ * -
+ * ** Start
+ * ** Game Over
  */
 
 function preload() {
@@ -161,7 +165,7 @@ function preload() {
     this.load.image(elementos.fimJogo.restart, 'images/restart-button.png');
     
 }*/
-} // Você está aqui -> fim da função preload    
+}     
 
 
 function create() {
@@ -170,6 +174,7 @@ function create() {
     //Depois de colocar esse pointerdown sumiu a mensagem inicial e o chaõ <o>
     mensagemInicial = this.add.image(cenario.width, cenario.height - 40, elementos.inicial);
     // Acho que setar uma profundidade aqui também
+    mensagemInicial.visible = true;
 
     chao = this.physics.add.sprite(cenario.width, 458, cenario.chao);
     chao.setCollideWorldBounds(true); // impede que o chão deixe de aparecer na tela
@@ -178,21 +183,70 @@ function create() {
     clique = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP) // Não funciona ainda 
     
     personagem = this.physics.add.sprite(60, 265, elementos.personagem);
-    personagem.setCollideWorldBounds(true);
-    personagem.body.allowGravity = false;
-    personagem.setBounce(0.2);
+    personagem.setCollideWorldBounds(true); // Impede que a sprite do jogador saia da tela
+    personagem.body.allowGravity = false; // Deixa fixo, por hora
+    personagem.setBounce(0.2); // // Parâmetro que faz o personagem quicar - Talvez aqui não seja o melhor lugar
 
-    /* Antigo arquivo ->>> Done :)
-        this.sprite.setBounce(0.2); // Parâmetro que faz o personagem quicar
-        this.sprite.setCollideWorldBounds(true); // impede que a sprite do jogador saia da tela
-        this.sprite.body.allowGravity = false;
-        */
+    /* Antigo arquivo - Usar em algum momento
+        this.sprite.setVelocityY(-400)
+        this.sprite.angle = -15
+        framesMoveUp = 5*/
 
 
-// VOcê está aqui -> fim da função create    
+// Você está aqui -> fim da função create    
 }
 
 function update() {
     
 // VOcê está aqui -> fim da função update    
 }
+
+/*
+function movimentaPersonagem() {
+    if (!jogoTerminado)
+        return
+    
+    if 
+}
+*/
+
+/*
+function start(){
+    mensagemInicial.visible = false; 
+    personagem.body.allowGravity = true;
+
+    // Aqui posso criar a animação do chão
+    chao.anims.create({
+        key: animacoes.chao.movendo,
+        frames: chao.anims.generateFrameNumbers(cenario.chao, {
+            start: 0,
+            end: 2
+        }),
+        frameRate: 15,
+        repeat: -1
+    })
+    chao.anims.create({
+        key: animacoes.chao.parado,
+        frames: [{
+            key: cenario.chao,
+            frame: 0
+        }],
+        frameRate: 20
+    })
+
+    const contagem = grupoContador.create(cenario.width, 30, elementos.contador.numero0)
+    // No referência aqui ele seta a profundidade como 20, mas ainda não entendi bem o funcionamento.
+}
+*/
+
+function gameOver(){
+    if(!jogoTerminado) {
+        jogoTerminado = true;
+        mensagemFinal.visible = true;
+        //Aqui que deveria criar o botão de restart? 
+
+        // Parar de animar o chão
+        // Parar de animar o personagem
+    }
+}
+
