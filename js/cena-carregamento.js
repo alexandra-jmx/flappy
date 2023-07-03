@@ -48,6 +48,7 @@ export default class CenaCarregamento extends Phaser.Scene {
         const alturaJogo = (this.sys.canvas.height/2)
         
         // Cenário
+        /*
         this.add.image(cenario.width, (alturaJogo), cenario.background).setInteractive(); // testar com o esse método
         start = this.add.image(cenario.width, (alturaJogo), cenario.start);
         // TODO
