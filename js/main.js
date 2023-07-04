@@ -76,10 +76,12 @@ let mensagemInicial;
 let mensagemFinal;
 let contador;
 let grupoContador;
+let tubos;
+let powerups;
+let clique;
+let framesMovimento;
 
 // Ações
-
-let clique;
 let jogoIniciado;
 let jogoTerminado;
 let restart;
@@ -171,9 +173,9 @@ function preload() {
 function create() {
     fundoDia = this.add.image(cenario.width, cenario.height, cenario.background).setInteractive(); // Serve para deixar o fundo interativo, vai auxiliar na hora de clicar para iniciar o jogo
     fundoDia.on('pointerdown', function(){
-    if(!jogoIniciado)
-        start();
-   }) // depois acrescentar para mover o personagem.
+        if(!jogoIniciado)
+            start();
+   })
     fundoDia.setDepth(0);
     //Depois de colocar esse pointerdown sumiu a mensagem inicial e o chaõ <o>
     mensagemInicial = this.add.image(cenario.width, cenario.height - 40, elementos.inicial);
@@ -184,6 +186,7 @@ function create() {
     chao = this.physics.add.sprite(cenario.width, 458, cenario.chao);
     chao.setCollideWorldBounds(true); // impede que o chão deixe de aparecer na tela
     chao.setDepth(3) // Determina a profundidade dos elementos
+
     /* Animação do chão dando erro
     chao.anims.create({
         key: animacoes.chao.movendo,
@@ -203,35 +206,77 @@ function create() {
         frameRate: 20
     })*/
      
-    //clique = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP) // Não funciona ainda 
+    clique = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP) // Não funciona ainda 
     
     personagem = this.physics.add.sprite(60, 265, elementos.personagem);
     personagem.setCollideWorldBounds(true); // Impede que a sprite do jogador saia da tela
-    personagem.body.allowGravity = false; // Deixa fixo, por hora
-    personagem.setBounce(0.2); // // Parâmetro que faz o personagem quicar - Talvez aqui não seja o melhor lugar
+    personagem.setBounce(1.4); // // Parâmetro que faz o personagem quicar - Talvez aqui não seja o melhor lugar
     personagem.setDepth(2);
+    personagem.upwardsVelocity = 0;
+    personagem.body.allowGravity = false; // Deixa fixo, por hora
+
+    this.physics.add.collider(chao, personagem); // Aeeee, parou de cair atrás do chão
+    this.physics.add.overlap(personagem, tubos, powerups);
+
 
 // Você está aqui -> fim da função create    
 }
 
 function update() {
-   
+    
+    fundoDia.tilePositionX += 0.25;
+    chao.tilePositionX += 2.5;         
+    // Não deu nada :( )
+    
+    //if (jogoIniciado)
+    //return  
+
+    //if (clique) this.salto();
+
+    /* Aqui é do referencia e tá dnado erro em encontrar o JustDown :(( ))
+    if (framesMovimento > 0)
+        framesMovimento--
+    else if (Phaser.Input.Keyboard.JustDown(clique))
+    salto()
+    else {
+    personagem.setVelocityY(120)
+
+    if (personagem.angle < 90)
+        personagem.angle += 1
+}*/
+
 // VOcê está aqui -> fim da função update    
 }
 
 //
 //*
-/*
-function Salto() {
+
+function salto() {
     if (!jogoTerminado){
         personagem.setVelocityY(-400);
-        player.angle = -15
+        personagem.setAngle(-15);
+        personagem.upwardsVelocity = 30; // Acho que não precisa, veremos.
+        //personagem.setVelocityX(50);
+        //personagem.angle = -15 //->>Aqui é da movimentação. Só faz sentido se alterar conforme a altura do y
 
+        
         // No referência ele coloca uma variavel com o número de frames e em outro momento, conforme o ângulo reduz a velocidade 
     } 
-}*/
+}
+/* Não tá funcionando 100% ainda. Olhar com calma.
+function queda() {
+    if (personagem.upwardsVelocity > 0){
+        personagem.upwardsVelocity--;
+    } else {
+        if (personagem.angle < 90){
+            personagem.angle += 3;
+            personagem.setAngle(personagem.angle);
+        } 
+    }
+    personagem.body.allowGravity = true;
 
-//*/
+} */
+
 
 
 function start(){
@@ -241,8 +286,11 @@ function start(){
     chao.anims.play(animacoes.chao.movendo);
     personagem.body.allowGravity = true;
 
+    salto();
+    //queda(); não funcionou
 
-    this.physics.world.enable([personagem]);
+
+    //this.physics.world.enable([personagem]);
 }
     
     // Aqui posso criar a animação do chão
