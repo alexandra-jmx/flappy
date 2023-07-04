@@ -78,7 +78,7 @@ let contador;
 let grupoContador;
 
 // Ações
-let start;
+
 let clique;
 let jogoIniciado;
 let jogoTerminado;
@@ -170,52 +170,21 @@ function preload() {
 
 function create() {
     fundoDia = this.add.image(cenario.width, cenario.height, cenario.background).setInteractive(); // Serve para deixar o fundo interativo, vai auxiliar na hora de clicar para iniciar o jogo
-    //fundoDia.on('pointerdown') // depois acrescentar para mover o personagem.
+    fundoDia.on('pointerdown', function(){
+    if(!jogoIniciado)
+        start();
+   }) // depois acrescentar para mover o personagem.
+    fundoDia.setDepth(0);
     //Depois de colocar esse pointerdown sumiu a mensagem inicial e o chaõ <o>
     mensagemInicial = this.add.image(cenario.width, cenario.height - 40, elementos.inicial);
     // Acho que setar uma profundidade aqui também
+    mensagemInicial.setDepth(4)
     mensagemInicial.visible = true;
 
     chao = this.physics.add.sprite(cenario.width, 458, cenario.chao);
     chao.setCollideWorldBounds(true); // impede que o chão deixe de aparecer na tela
-    chao.setDepth(10) // Determina a profundidade dos elementos
-     
-    clique = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP) // Não funciona ainda 
-    
-    personagem = this.physics.add.sprite(60, 265, elementos.personagem);
-    personagem.setCollideWorldBounds(true); // Impede que a sprite do jogador saia da tela
-    personagem.body.allowGravity = false; // Deixa fixo, por hora
-    personagem.setBounce(0.2); // // Parâmetro que faz o personagem quicar - Talvez aqui não seja o melhor lugar
-
-    /* Antigo arquivo - Usar em algum momento
-        this.sprite.setVelocityY(-400)
-        this.sprite.angle = -15
-        framesMoveUp = 5*/
-
-
-// Você está aqui -> fim da função create    
-}
-
-function update() {
-    
-// VOcê está aqui -> fim da função update    
-}
-
-/*
-function movimentaPersonagem() {
-    if (!jogoTerminado)
-        return
-    
-    if 
-}
-*/
-
-/*
-function start(){
-    mensagemInicial.visible = false; 
-    personagem.body.allowGravity = true;
-
-    // Aqui posso criar a animação do chão
+    chao.setDepth(3) // Determina a profundidade dos elementos
+    /* Animação do chão dando erro
     chao.anims.create({
         key: animacoes.chao.movendo,
         frames: chao.anims.generateFrameNumbers(cenario.chao, {
@@ -232,13 +201,58 @@ function start(){
             frame: 0
         }],
         frameRate: 20
-    })
+    })*/
+     
+    //clique = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP) // Não funciona ainda 
+    
+    personagem = this.physics.add.sprite(60, 265, elementos.personagem);
+    personagem.setCollideWorldBounds(true); // Impede que a sprite do jogador saia da tela
+    personagem.body.allowGravity = false; // Deixa fixo, por hora
+    personagem.setBounce(0.2); // // Parâmetro que faz o personagem quicar - Talvez aqui não seja o melhor lugar
+    personagem.setDepth(2);
 
-    const contagem = grupoContador.create(cenario.width, 30, elementos.contador.numero0)
-    // No referência aqui ele seta a profundidade como 20, mas ainda não entendi bem o funcionamento.
+// Você está aqui -> fim da função create    
 }
-*/
 
+function update() {
+   
+// VOcê está aqui -> fim da função update    
+}
+
+//
+//*
+/*
+function Salto() {
+    if (!jogoTerminado){
+        personagem.setVelocityY(-400);
+        player.angle = -15
+
+        // No referência ele coloca uma variavel com o número de frames e em outro momento, conforme o ângulo reduz a velocidade 
+    } 
+}*/
+
+//*/
+
+
+function start(){
+
+    jogoIniciado = true;
+    mensagemInicial.visible = false; 
+    chao.anims.play(animacoes.chao.movendo);
+    personagem.body.allowGravity = true;
+
+
+    this.physics.world.enable([personagem]);
+}
+    
+    // Aqui posso criar a animação do chão
+    
+
+    //const contagem = grupoContador.create(cenario.width, 30, elementos.contador.numero0)
+    // No referência aqui ele seta a profundidade como 20, mas ainda não entendi bem o funcionamento.
+//}
+
+/*
 function gameOver(){
     if(!jogoTerminado) {
         jogoTerminado = true;
@@ -249,4 +263,4 @@ function gameOver(){
         // Parar de animar o personagem
     }
 }
-
+*/
