@@ -32,8 +32,8 @@ const elementos = {
     personagem: 'vivi-boy',
     obstaculos: {
         tubo: {
-            top: 'tubo-vermelho-top',
-            bottom: 'tubo-vermelho-bottom' 
+            superior: 'tubo-vermelho-superior',
+            inferior: 'tubo-vermelho-bottom' 
         }
     },
     contador: {
@@ -77,9 +77,11 @@ let mensagemFinal;
 let contador;
 let grupoContador;
 let tubos;
+let tuboAtual;
+let grupoTubos;
+let grupoEspacamento;
 let espacamento;
 let powerups;
-let clique;
 let framesMovimento;
 
 // Ações
@@ -143,8 +145,8 @@ function preload() {
     
     
     // Tubo
-    this.load.image(elementos.obstaculos.tubo.bottom, 'images/pipe-red-bottom.png');
-    this.load.image(elementos.obstaculos.tubo.top, 'images/pipe-red-top.png');
+    this.load.image(elementos.obstaculos.tubo.inferior, 'images/pipe-red-inferior.png');
+    this.load.image(elementos.obstaculos.tubo.superior, 'images/pipe-red-top.png');
     
     /*
     // PowerUps
@@ -173,9 +175,11 @@ function preload() {
 
 function create() {
     fundoDia = this.add.image(cenario.width, cenario.height, cenario.background).setInteractive(); // Serve para deixar o fundo interativo, vai auxiliar na hora de clicar para iniciar o jogo
-    fundoDia.on('pointerdown', function(){
-        if(!jogoIniciado)
-            start();
+    fundoDia.on('pointerdown', () => {
+        salto();
+    // function(){
+    //     if(!jogoIniciado)
+    //         start(); ->> substitui pois a princípio assim vai garantir que sempre que clicar vai executar o salto. Que lenta ela
    })
     fundoDia.setDepth(0);
     //Depois de colocar esse pointerdown sumiu a mensagem inicial e o chaõ <o>
@@ -211,13 +215,13 @@ function create() {
     
     personagem = this.physics.add.sprite(60, 265, elementos.personagem);
     personagem.setCollideWorldBounds(true); // Impede que a sprite do jogador saia da tela
-    personagem.setBounce(1.4); // // Parâmetro que faz o personagem quicar - Talvez aqui não seja o melhor lugar
+    personagem.setBounce(0.2); // // Parâmetro que faz o personagem quicar - Talvez aqui não seja o melhor lugar
     personagem.setDepth(2);
     personagem.upwardsVelocity = 0;
     personagem.body.allowGravity = false; // Deixa fixo, por hora
 
-    tubos = this.physics.add.group();
-    tubos.setDepth(1);
+    // grupoTubostubos = this.physics.add.group();
+    // tubos.setDepth(1);
     //this.physics.add.overlap(tubos, personagem, gameOver, null, this);
     /*
     tubos = this.physics.add.group();
@@ -288,9 +292,9 @@ function update() {
 
 function salto() {
     if (!jogoTerminado){
-        personagem.setVelocityY(-400);
+        personagem.setVelocityY(-300);
         personagem.setAngle(-15);
-        personagem.upwardsVelocity = 30; // Acho que não precisa, veremos.
+        //personagem.upwardsVelocity = 30; // Acho que não precisa, veremos.
         //personagem.setVelocityX(50);
         //personagem.angle = -15 //->>Aqui é da movimentação. Só faz sentido se alterar conforme a altura do y
 
@@ -312,36 +316,23 @@ function queda() {
 
 } */
 
-function criarObstaculos() {
-    if(jogoIniciado && !jogoTerminado)
+// function criarObstaculos() {
+//     if(jogoIniciado && !jogoTerminado) return
 
+//     const posicaoTuboSuperior = Phaser.Math.Between(-120, 120)
 
-    espacamento = 200; 
-    let randomPosicaoSuperior = Phaser.Math.Between(50, 300);
+//     espacamento = scene.add.line(288, posicaoTuboSuperior + 210, 0, 0, 0, 98)
+//     grupoEspacamento.add(espacamento)
+//     espacamento.body.allowGravity = false
+//     espacamento.visible = false
 
-    let calculoPosicaoInferior = (cenario.height * 2) - chao.height - randomPosicaoSuperior - espacamento; 
-    let tuboInferior = tubos.add.tileSprite(400, 462, 52, calculoPosicaoInferior, elementos.obstaculos.tubo.bottom).setOrigin(0.5, 1);
-    this.physics.add.existing(tuboInferior, false);
-    tubos.add(tuboInferior);
-    tuboInferior.body.setImmovable();
-    tuboInferior.body.setAllowGravity(false);
+//     const tuboSuperior = grupoTubos.create(288, posicaoTuboSuperior, tuboAtual.superior)
+//     tuboSuperior.body.allowGravity = false
 
-
-    let tuboSuperior = tubos.add.tileSprite(400, randomPosicaoSuperior, 52, 320, elementos.obstaculos.tubo.top).setOrigin(0.5, 1);
-    tubos.physics.add.existing(tuboSuperior, false);
-    tubos.add(tuboSuperior);
-    tuboSuperior.body.setImmovable();
-    tuboSuperior.body.setAllowGravity(false);
+//     const tuboInferior = grupoTubos.create(288, posicaoTuboSuperior + 420, tuboAtual.inferior)
+//     tuboInferior.body.allowGravity = false
     
-    /*
-    let zoneScore = this.add.zone(400 + tuboInferior.width/2, 0).setSize(1, this.game.config.height - this.base.height);
-    this.zonesScore.add(zoneScore);
-    zoneScore.setDepth(0);
-    this.physics.world.enable(zoneScore);
-    zoneScore.body.setAllowGravity(false);
-    zoneScore.body.moves = false;  */
-
-}
+// }; 
 
 
 function start(){
@@ -351,9 +342,9 @@ function start(){
     chao.anims.play(animacoes.chao.movendo);
     personagem.body.allowGravity = true;
 
-    salto();
+    //salto(); // não dá pra manter aqui hehe
     //queda(); não funcionou
-    criarObstaculos();
+    //criarObstaculos();
 
 
     //this.physics.world.enable([personagem]);
