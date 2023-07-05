@@ -77,6 +77,7 @@ let mensagemFinal;
 let contador;
 let grupoContador;
 let tubos;
+let espacamento;
 let powerups;
 let clique;
 let framesMovimento;
@@ -140,12 +141,12 @@ function preload() {
         frameHeight: 24
     }); 
     
-    /*
+    
     // Tubo
-    this.load.image(elementos.obstaculos.tubo.vermelho.bottom, 'images/pipe-red-bottom.png');
-    this.load.image(elementos.obstaculos.tubo.vermelho.top, 'images/pipe-red-top.png');
+    this.load.image(elementos.obstaculos.tubo.bottom, 'images/pipe-red-bottom.png');
+    this.load.image(elementos.obstaculos.tubo.top, 'images/pipe-red-top.png');
     
-    
+    /*
     // PowerUps
     this.load.image(elementos.especiais.healthyFood, 'images/healthy-food.png');
     this.load.image(elementos.especiais.junkFood, 'images/junk-food.png');
@@ -206,7 +207,7 @@ function create() {
         frameRate: 20
     })*/
      
-    clique = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP) // Não funciona ainda 
+    //clique = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP) // Não funciona ainda 
     
     personagem = this.physics.add.sprite(60, 265, elementos.personagem);
     personagem.setCollideWorldBounds(true); // Impede que a sprite do jogador saia da tela
@@ -215,8 +216,33 @@ function create() {
     personagem.upwardsVelocity = 0;
     personagem.body.allowGravity = false; // Deixa fixo, por hora
 
-    this.physics.add.collider(chao, personagem); // Aeeee, parou de cair atrás do chão
-    this.physics.add.overlap(personagem, tubos, powerups);
+    tubos = this.physics.add.group();
+    tubos.setDepth(1);
+    //this.physics.add.overlap(tubos, personagem, gameOver, null, this);
+    /*
+    tubos = this.physics.add.group();
+
+    this.input.on('pointerdown', salto, this);
+
+    this.time.addEvent({
+        delay: 2000,
+        callback: criarObstaculos,
+        callbackScope: this,
+        loop: true
+    });*/
+
+    /*
+    this.time.addEvent({
+        delay: 5000,
+        callback: createPowerup,
+        callbackScope: this,
+        loop: true
+    });*/
+
+
+    this.physics.add.collider(chao, personagem, tubos, null, this); // Aeeee, parou de cair atrás do chão
+    //this.physics.add.overlap(personagem, tubos, powerups);
+    this.physics.add.overlap(personagem, null, this);
 
 
 // Você está aqui -> fim da função create    
@@ -224,8 +250,17 @@ function create() {
 
 function update() {
     
-    fundoDia.tilePositionX += 0.25;
-    chao.tilePositionX += 2.5;         
+    if (personagem.y > 580) {
+        gameOver();
+    }
+    /*
+    if (powerupActive) {
+        powerup.angle += 1;
+    }*/
+
+
+    //fundoDia.tilePositionX += 0.25;
+    //chao.tilePositionX += 2.5;         
     // Não deu nada :( )
     
     //if (jogoIniciado)
@@ -277,6 +312,36 @@ function queda() {
 
 } */
 
+function criarObstaculos() {
+    if(jogoIniciado && !jogoTerminado)
+
+
+    espacamento = 200; 
+    let randomPosicaoSuperior = Phaser.Math.Between(50, 300);
+
+    let calculoPosicaoInferior = (cenario.height * 2) - chao.height - randomPosicaoSuperior - espacamento; 
+    let tuboInferior = tubos.add.tileSprite(400, 462, 52, calculoPosicaoInferior, elementos.obstaculos.tubo.bottom).setOrigin(0.5, 1);
+    this.physics.add.existing(tuboInferior, false);
+    tubos.add(tuboInferior);
+    tuboInferior.body.setImmovable();
+    tuboInferior.body.setAllowGravity(false);
+
+
+    let tuboSuperior = tubos.add.tileSprite(400, randomPosicaoSuperior, 52, 320, elementos.obstaculos.tubo.top).setOrigin(0.5, 1);
+    tubos.physics.add.existing(tuboSuperior, false);
+    tubos.add(tuboSuperior);
+    tuboSuperior.body.setImmovable();
+    tuboSuperior.body.setAllowGravity(false);
+    
+    /*
+    let zoneScore = this.add.zone(400 + tuboInferior.width/2, 0).setSize(1, this.game.config.height - this.base.height);
+    this.zonesScore.add(zoneScore);
+    zoneScore.setDepth(0);
+    this.physics.world.enable(zoneScore);
+    zoneScore.body.setAllowGravity(false);
+    zoneScore.body.moves = false;  */
+
+}
 
 
 function start(){
@@ -288,6 +353,7 @@ function start(){
 
     salto();
     //queda(); não funcionou
+    criarObstaculos();
 
 
     //this.physics.world.enable([personagem]);
