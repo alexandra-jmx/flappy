@@ -1,9 +1,9 @@
 import assets from './assets.js';
-import personagem from './personagem.js';
+//import personagem from './personagem.js';
 
 class cenaJogo extends Phaser.Scene {
     constructor(){
-        super('personagem');
+        super();
     }
 
     preload() {
@@ -15,6 +15,18 @@ class cenaJogo extends Phaser.Scene {
         frameWidth: 336,
         frameHeight: 112
     }); 
+
+// Personagem
+   /** TODO
+    * - Verificar se tem como comor imagem em svg para melhorar a qualidade
+    * - Alterar para o personagem do Vivico
+    *  - Alterar os frames
+    * */
+    this.load.spritesheet(assets.personagem, 'images/vivi-boy.png', {
+        frameWidth: 34,
+        frameHeight: 24
+    }); 
+
 
 // Tubos
     this.load.image(assets.tubo.inferior, 'images/pipe-red-bottom.png');
@@ -62,7 +74,8 @@ class cenaJogo extends Phaser.Scene {
         this.chao = this.physics.add.sprite(assets.width, 468, assets.chao);
 		this.chao.setCollideWorldBounds(true);
 		this.chao.setDepth(3);
-		// this.chao.setSize(0, 100, 0, 0).setOffset(0, 10); // Área para colisão. Não sei se precisaria, se somente a altura do personagem em y não seria o suficiente.
+		this.chao.setSize(0, 100, 0, 0).setOffset(0, 5); // Área para colisão. Não sei se precisaria, se somente a altura do personagem em y não seria o suficiente.
+        // Acho que vai precisar sim, pq se não fica com espaçamento muito grande do chão :(. Alterei de 10 para 5)
 
         this.anims.create({ key: assets.animacoes.chao.movendo, 
 			frames: this.anims.generateFrameNumbers(assets.chao, {
@@ -81,10 +94,20 @@ class cenaJogo extends Phaser.Scene {
 			frameRate: 20
 		});
 
+    // Personagem
+        this.personagem = this.physics.add.sprite(60, 265, assets.personagem);
+        this.personagem.body.allowGravity = false;
+        this.personagem.body.setCollideWorldBounds(true);
+        this.personagem.setDepth(2);
+        // Impede que a sprite do jogador saia da tela / 
+        this.personagem.upwardsVelocity = 0
+    //    this.personagem.angle = -15; // ->> dando erro no console
+        // personagem.setBounce(0.2); // // Parâmetro que faz o personagem quicar - Talvez aqui não seja o melhor lugar e talvez nem pr
+
     // Mensagem inicial
         this.inicial = this.add.image(assets.width, assets.height -40, assets.inicial);
         this.inicial.setDepth(4)
-        this.inicial.visible = false;
+        this.inicial.visible = true;
          //true; ->>> desativei pq tirei a função start do pointerdown, e agora clica e a mensagem não sain ainda hehe
 
     // Mensagem Game Over + restart
@@ -96,9 +119,14 @@ class cenaJogo extends Phaser.Scene {
         this.restart.setDepth(3);
         this.restart.visible = false;
 
-        //Mensagens funcionando :) 
 
-    
+        //Mensagens funcionando :)
+        
+
+        
+
+         this.start();
+        
 
     } // Você está aqui -> fim da função create   
     
@@ -106,33 +134,31 @@ class cenaJogo extends Phaser.Scene {
 
     } // Você está aqui -> fim da função update   
 
-        //this.jogador.setVisible(true);
-        // TODO
-        // - Lógica para início da cena de Jogo
-        // - Desativar a visibilidade da mensagem inicial 
-
-        //this.ground.chao.sprite.anims.play(ground.animacoes.movendo);
+// Para zerar os elementos do cenário e iniciar a função salto/voo
+    start() {
         
-        //Para iniciar o jogo
-        //this.load.on('progress', (value) => {
-        //     console.log(value*100 + ' %');
-        // });
-
-        // this.load.on('complete', () => {
-        //     this.scene.start('CenaJogo');
-        // });
-
-        /*Testar essa aqui também
-        this.bg.on('pointerdown', () => {
-            this.gameStarted ? this.jump() : this.startGame();
+        this.input.on('pointerdown', function () {
+            this.salto();
+        }, this);
         
-        Fazendo assim: 
-        this.cenario.background.on('pointerdown', () => {
-            this.scene.start('CenaJogo');
-        Ficou com a tela preta :( Tentei asssim originalmente
+        this.inicial.visible = true; // mesmo que deixe na criação como true e aqui como false, na hora que iniciar a função vai seguir visível
+        this.gameOver.visible = false;
+        this.restart.visible = false;
+        this.fundoDia.visible = true; // meio desnecessário já que só vai ter um fundo. 
+        
+        this.physics.add.collider(this.personagem, this.chao, null, this);
+        this.physics.add.overlap(this.personagem, this.tubos, null, this);
+        this.chao.anims.play( assets.animacoes.chao.movendo, true );
+    }    
 
+    salto() {
+        this.personagem.body.setVelocityY(-300)
+        this.personagem.setAngle(-15);
+        this.personagem.angle = -15;
+        this.personagem.body.allowGravity = true; 
+        this.upwardsVelocity = 30;
 
-        */
+    }
 }
 
 export default cenaJogo;
