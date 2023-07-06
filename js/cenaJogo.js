@@ -135,12 +135,26 @@ class cenaJogo extends Phaser.Scene {
     } // Você está aqui -> fim da função create   
     
     update() {
+        this.tubos.children.iterate(function(tubo){
+			if (tubo == undefined) return;
+			if (tubo.x < -50) tubo.destroy();
+			else tubo.setVelocityX(-80);
+		});
 
+		this.espacamentos.children.iterate(function(espacamento){
+			espacamento.body.setVelocityX(-80);
+		});
+
+		this.proximoTubo++;
+
+		if (this.proximoTubo === 200){
+			this.criaTubos();
+			this.proximoTubo = 0;
+		}
     } // Você está aqui -> fim da função update   
 
 // Para zerar os elementos do cenário e iniciar a função salto/voo
     start() {
-        this.tuboAtual = assets.tubo;
         this.proximoTubo = 0;
 
         this.input.on('pointerdown', function () {
@@ -159,7 +173,7 @@ class cenaJogo extends Phaser.Scene {
         if (!this.jogoIniciado) { 
             this.startGame();
         }
-        this.personagem.body.setVelocityY(-300)
+        this.personagem.body.setVelocityY(-200)
         this.personagem.setAngle(-15);
         this.personagem.angle = -15;
         this.personagem.body.allowGravity = true; 
@@ -170,7 +184,7 @@ class cenaJogo extends Phaser.Scene {
 
         this.jogoIniciado = true;
         this.inicial.visible = false;
-        this.chao.anims.play( assets.animacoes.chao.movendo, true);
+        this.chao.anims.play(assets.animacoes.chao.movendo, true);
         // // tá funcionando \o/  mas quero só depois que o jogo realmente tiver começado
         this.criaTubos();
 
@@ -186,17 +200,20 @@ class cenaJogo extends Phaser.Scene {
     }
 
     criaTubos() {
+        if (this.jogoIniciado){ //amém
+
+
         let tSuperior = Phaser.Math.Between(-120, 120);
         let espacamento = this.add.line(288, tSuperior + 210, 0, 0, 0, 98);
         this.espacamentos.add(espacamento);
         espacamento.body.allowGravity = false;
         espacamento.visible = false;
 
-        let tuboSuperior = this.tubos.create(288, top, this.tuboAtual.superior);
+        let tuboSuperior = this.tubos.create(288, tSuperior, assets.tubo.superior);
         tuboSuperior.body.allowGravity = false;
-        let tuboInferior = this.tubos.create(288, top + 420, this.tuboAtual.inferior);
+        let tuboInferior = this.tubos.create(288, tSuperior + 420, assets.tubo.inferior);
         tuboInferior.body.allowGravity = false;        
-
+        }
     }
 
     gameOver(){
