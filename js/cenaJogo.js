@@ -32,9 +32,10 @@ class cenaJogo extends Phaser.Scene {
     this.load.image(assets.tubo.inferior, 'images/pipe-red-bottom.png');
     this.load.image(assets.tubo.superior, 'images/pipe-red-top.png');
 
-// PowerUps
+// PowerUps / Especiais
     this.load.image(assets.especiais.healthyFood, 'images/healthy-food.png');
     this.load.image(assets.especiais.junkFood, 'images/junk-food.png');
+// PRECISAR DE UM RESIZE NISSO AQUI
     
 // Números do contador
     this.load.image(assets.contador.numero0, 'images/number0.png');
@@ -108,6 +109,9 @@ class cenaJogo extends Phaser.Scene {
         this.espacamentos = this.physics.add.group(); // espaço entre os tubos inferiores e superiores
         this.tubos = this.physics.add.group();
 
+    // Especiais
+        this.especiais = this.physics.add.group();
+
     //Contador
         this.grupoContador = this.physics.add.staticGroup();
         // this.grupoContador.setImmovable(true); -> deu ruim
@@ -129,8 +133,8 @@ class cenaJogo extends Phaser.Scene {
 
         //Mensagens funcionando :)
         
-        this.physics.add.collider(this.personagem, this.chao, this.colisao, null, this);
-        this.physics.add.overlap(this.personagem, this.tubos, this.colisao, null, this);
+        this.physics.add.collider(this.personagem, this.chao, this.especiais, this.colisao, null, this);
+        this.physics.add.overlap(this.personagem, this.tubos, this.especiais, this.colisao, null, this);
         this.physics.add.overlap(this.personagem, this.espacamentos, this.atualizaContador, null, this);
 
          this.start();
@@ -161,6 +165,21 @@ class cenaJogo extends Phaser.Scene {
 			this.proximoTubo = 0;
 		}
 
+        this.especiais.children.iterate(function(especial){
+			if (especial == undefined) return;
+			if (especial.x < -30) especial.destroy();
+			else especial.setVelocityX(-80); // não tão rápido por motivo de criança
+		});
+
+		this.proximoEspecial++;
+
+		if (this.proximoEspecial === 300){ // espaçadinho para ter espaço para os powerups :)
+			this.criaEspeciais();
+			this.proximoEspecial = 20;
+		}
+
+
+
         //this.atulizaContagem();
 
 
@@ -183,7 +202,7 @@ class cenaJogo extends Phaser.Scene {
     }
     
     salto() {
-        if (!this.jogoIniciado) { 
+        if (!this.jogoIniciado ) { 
             this.startGame();
         }
         this.personagem.body.setVelocityY(-200)
@@ -205,6 +224,7 @@ class cenaJogo extends Phaser.Scene {
         // criei, mas tá despencaaaaando <o>
         
         this.criaTubos();
+        this.criaEspeciais();
 
     }
 
@@ -223,29 +243,29 @@ class cenaJogo extends Phaser.Scene {
     colisao() {
         this.tubos.children.iterate(function(tubo){
 			if (tubo == undefined) return;
-			tubo.setVelocityX(0);
+			tubos.setVelocityX(0);
 		});
 
 		this.jogoTerminado = true;
 		this.jogoIniciado = false;
 
-		this.chao.anims.stop(assets.animacoes.chao.parado, true);
+		this.chao.anims.stop(assets.animacoes.chao.movendo, false);
 		this.gameOver.visible = true;
 		this.restart.visible = true;
 
-        this.falecido();
+        this.personagem.setAngle(90);
+        this.personagem.setDepth(1);
+
 
 	}
 
-    falecido() {
-        this.personagem.setAngle(90);
-		this.personagem.setDepth(1);
-    }
+    
+
 
 
 
     criaTubos() {
-        if (this.jogoIniciado){ //amém
+        if ((this.jogoIniciado) && (!this.jogoTerminado)){ //amém
 
 
         let tSuperior = Phaser.Math.Between(-120, 120);
@@ -260,6 +280,31 @@ class cenaJogo extends Phaser.Scene {
         tuboInferior.body.allowGravity = false;        
         }
     }
+
+    // especialAleatorio() {
+    //     switch (Phaser.Math.Between(0, 1)) {
+    //         case 0:
+    //             this.especialRandom = assets.especiais.healthyFood
+    //         case 1:
+    //             default:
+    //             this.especialRandom = assets.especiais.junkFood
+    // }
+    // }
+
+    criaEspeciais() {
+        if ((this.jogoIniciado) && (!this.jogoTerminado)){
+
+        let especialRandom =  Phaser.Math.RND.pick([assets.especiais.healthyFood, assets.especiais.junkFood]);
+        
+        let especialPosicaoY = Phaser.Math.Between(-60, 60);
+        let especial = this.especiais.create(400, especialPosicaoY, especialRandom)
+                especial.body.allowGravity = false
+                especial.setScale(1.8);
+
+        }
+
+        }
+    
 
     //Dando ruim :()
     atulizaContagem(espacamento) {
