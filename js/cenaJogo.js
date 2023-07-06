@@ -35,7 +35,7 @@ class cenaJogo extends Phaser.Scene {
 // PowerUps / Especiais
     this.load.image(assets.especiais.healthyFood, 'images/healthy-food.png');
     this.load.image(assets.especiais.junkFood, 'images/junk-food.png');
-// PRECISAR DE UM RESIZE NISSO AQUI
+// PRECISAR DE UM RESIZE NISSO AQUI - OK :)
     
 // Números do contador
     this.load.image(assets.contador.numero0, 'images/number0.png');
@@ -99,7 +99,7 @@ class cenaJogo extends Phaser.Scene {
         this.personagem = this.physics.add.sprite(60, 265, assets.personagem);
         this.personagem.body.allowGravity = false;
         this.personagem.body.setCollideWorldBounds(true);
-        this.personagem.setDepth(2);
+        this.personagem.setDepth(1);
         // Impede que a sprite do jogador saia da tela / 
         this.personagem.upwardsVelocity = 0
     //    this.personagem.angle = -15; // ->> dando erro no console
@@ -129,12 +129,14 @@ class cenaJogo extends Phaser.Scene {
         this.restart = this.add.image(assets.width, assets.height + 50, assets.fimJogo.restart).setInteractive(); // pq vai ser clicável
         this.restart.setDepth(3);
         this.restart.visible = false;
-
+        // this.restart.on('pointerdown', () => this.restartGame(this));
+        // // Não funcionou ainda 
+        //this.restart.on('pointerdown', this.gameOver);
 
         //Mensagens funcionando :)
         
-        this.physics.add.collider(this.personagem, this.chao, this.especiais, this.colisao, null, this);
-        this.physics.add.overlap(this.personagem, this.tubos, this.especiais, this.colisao, null, this);
+        this.physics.add.collider(this.personagem, this.chao, /*this.especiais,*/ this.colisao, null, this);
+        this.physics.add.overlap(this.personagem, this.tubos, /*this.especiais,*/ this.colisao, null, this);
         this.physics.add.overlap(this.personagem, this.espacamentos, this.atualizaContador, null, this);
 
          this.start();
@@ -175,13 +177,12 @@ class cenaJogo extends Phaser.Scene {
 
 		if (this.proximoEspecial === 300){ // espaçadinho para ter espaço para os powerups :)
 			this.criaEspeciais();
-			this.proximoEspecial = 20;
+			this.proximoEspecial = 0;
 		}
 
 
 
         //this.atulizaContagem();
-
 
     } // Você está aqui -> fim da função update   
 
@@ -196,15 +197,19 @@ class cenaJogo extends Phaser.Scene {
         this.inicial.visible = true; // mesmo que deixe na criação como true e aqui como false, na hora que iniciar a função vai seguir visível
         this.gameOver.visible = false;
         this.restart.visible = false;
+        
+        
+
         //this.fundoDia.visible = true; // meio desnecessário já que só vai ter um fundo. 
         
         this.criaTubos();
     }
     
     salto() {
-        if (!this.jogoIniciado ) { 
+        if (!this.jogoIniciado) { 
             this.startGame();
         }
+        
         this.personagem.body.setVelocityY(-200)
         this.personagem.setAngle(-15);
         this.personagem.angle = -15;
@@ -236,14 +241,13 @@ class cenaJogo extends Phaser.Scene {
             this.personagem.angle += 1;
             this.personagem.setAngle(this.personagem.angle);
         }
-    }
-    
-
+    }    
 
     colisao() {
+
         this.tubos.children.iterate(function(tubo){
 			if (tubo == undefined) return;
-			tubos.setVelocityX(0);
+			tubo.setVelocityX(0);
 		});
 
 		this.jogoTerminado = true;
@@ -252,16 +256,13 @@ class cenaJogo extends Phaser.Scene {
 		this.chao.anims.stop(assets.animacoes.chao.movendo, false);
 		this.gameOver.visible = true;
 		this.restart.visible = true;
+        this.restart.on('pointerdown', function () {
+            this.reiniciar();
+        }, this);
 
         this.personagem.setAngle(90);
         this.personagem.setDepth(1);
-
-
 	}
-
-    
-
-
 
 
     criaTubos() {
@@ -296,16 +297,14 @@ class cenaJogo extends Phaser.Scene {
 
         let especialRandom =  Phaser.Math.RND.pick([assets.especiais.healthyFood, assets.especiais.junkFood]);
         
-        let especialPosicaoY = Phaser.Math.Between(-60, 60);
-        let especial = this.especiais.create(400, especialPosicaoY, especialRandom)
+        let especialPosicaoY = Phaser.Math.Between(-10, 200);
+        let especial = this.especiais.create(410, especialPosicaoY, especialRandom)
                 especial.body.allowGravity = false
                 especial.setScale(1.8);
-
         }
 
         }
     
-
     //Dando ruim :()
     atulizaContagem(espacamento) {
         this.contagem = this.contagem++;
@@ -324,19 +323,20 @@ class cenaJogo extends Phaser.Scene {
         }
     }
 
-    gameOver() {
-        scene.tubos.clear(true, true);
-		scene.espacamentos.clear(true, true);
-		scene.personagem.destroy();
-		scene.gameOver.visible = false;
-		scene.restart.visible = false;
-		scene.startGame();
+    reiniciar() {
+    
+        this.tubos.clear(true, true);
+        this.espacamentos.clear(true, true);
+		this.personagem.destroy();
+		this.gameOver.visible = false;
+		this.restart.visible = false;
+		this.start();
 	}
 
 
-    reiniciar() {
+    //reiniciar() {
 
-    }
+    //}
 
 }
 export default cenaJogo;

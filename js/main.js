@@ -13,7 +13,7 @@ window.onload = function() {
                 gravity: {
                     y: 600
                 },
-                debug: true // Lembrar de desativar na versão final :)
+                debug: false // Lembrar de desativar na versão final :)
             }
         },
         scene: [ cenaJogo ]
@@ -24,29 +24,24 @@ window.onload = function() {
 }
 
 
-// (OK) const jogo => inicia o jogo e é chamada dentro da cena. 
 
-// /** Funções
-//  * Preload
-//  *  - Carregar imagens:
-//  *      - Mensagem inicial OK
-//  *      - Fundo (background) OK
-//  *      - Chão  OK
-//  *      - Personagem -> Pendente de ajustes -> mudança do personagem
-//  *      - Tubo vermelho OK
-//  *      - Especiais -> Talves precise de ajustes. Não sei se não seria melhor usar como sprite também
-//  *      - Mensagem final (end game) OK
-//  *      - Botão de restart OK
-//  * Create
-//  *  - Fundo OK
-//  *  - Mensagem inicial OK
-//  *  - Chao Ok
-//  *  - Personagem (fixo) OK
-//  * Update
-//  * -
-//  * ** Start -> em andamento
-//  * ** Game Over
-//  * ** Salto -> em andamento
-// */
+/** FALTA:
+ * - Trocar a imagem do personagem
+ * - Trocar a mensagem inicial para qualidade maior
+ * - função de converter de svg para imagem
+ * 
+ ** Criar
+ * - Função para coleta dos especiais
+ * - função de efeito de cada especial por x segundos(?)
+ * 
+ * Ajustar
+ * - Contador 
+ * - Atualização do contador
+ * - Funcionamento do votão de restart
+ * - O personagem segue saltando depois de cair 
+ * - a mensagem de game over parou de aparecer D: (ok)
+ * - Ajustar a posição onde os especiais são criados (ok)
+ * - Ajustar a crianção deg
+*/
 
 
