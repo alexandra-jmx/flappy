@@ -109,7 +109,8 @@ class cenaJogo extends Phaser.Scene {
         this.tubos = this.physics.add.group();
 
     //Contador
-        this.grupoContador = this.physics.add.group();
+        this.grupoContador = this.physics.add.staticGroup();
+        // this.grupoContador.setImmovable(true); -> deu ruim
 
     // Mensagem inicial
         this.inicial = this.add.image(assets.width, assets.height -40, assets.inicial);
@@ -128,8 +129,8 @@ class cenaJogo extends Phaser.Scene {
 
         //Mensagens funcionando :)
         
-        this.physics.add.collider(this.personagem, this.chao, null, this);
-        this.physics.add.overlap(this.personagem, this.tubos, null, this);
+        this.physics.add.collider(this.personagem, this.chao, this.colisao, null, this);
+        this.physics.add.overlap(this.personagem, this.tubos, this.colisao, null, this);
         this.physics.add.overlap(this.personagem, this.espacamentos, this.atualizaContador, null, this);
 
          this.start();
@@ -138,7 +139,9 @@ class cenaJogo extends Phaser.Scene {
     } // Você está aqui -> fim da função create   
     
     update() {
-        if (this.jogoIniciado)
+        if (!this.jogoIniciado) return
+        if (this.jogoTerminado) return
+
         this.queda();
 
         this.tubos.children.iterate(function(tubo){
@@ -157,6 +160,10 @@ class cenaJogo extends Phaser.Scene {
 			this.criaTubos();
 			this.proximoTubo = 0;
 		}
+
+        //this.atulizaContagem();
+
+
     } // Você está aqui -> fim da função update   
 
 // Para zerar os elementos do cenário e iniciar a função salto/voo
@@ -192,11 +199,12 @@ class cenaJogo extends Phaser.Scene {
         this.inicial.visible = false;
         this.chao.anims.play(assets.animacoes.chao.movendo, true);
         // // tá funcionando \o/  mas quero só depois que o jogo realmente tiver começado
+        this.contagem = 0;
         const contagemInicial = this.grupoContador.create(assets.width, 30, assets.contador.numero0);
         contagemInicial.setDepth(2);
+        // criei, mas tá despencaaaaando <o>
         
         this.criaTubos();
-
 
     }
 
@@ -213,8 +221,28 @@ class cenaJogo extends Phaser.Scene {
 
 
     colisao() {
+        this.tubos.children.iterate(function(tubo){
+			if (tubo == undefined) return;
+			tubo.setVelocityX(0);
+		});
 
+		this.jogoTerminado = true;
+		this.jogoIniciado = false;
+
+		this.chao.anims.stop(assets.animacoes.chao.parado, true);
+		this.gameOver.visible = true;
+		this.restart.visible = true;
+
+        this.falecido();
+
+	}
+
+    falecido() {
+        this.personagem.setAngle(90);
+		this.personagem.setDepth(1);
     }
+
+
 
     criaTubos() {
         if (this.jogoIniciado){ //amém
@@ -233,18 +261,37 @@ class cenaJogo extends Phaser.Scene {
         }
     }
 
-    contagem() {
+    //Dando ruim :()
+    atulizaContagem(espacamento) {
+        this.contagem = this.contagem++;
+        this.espacamento.destroy();
 
+        const contadorString = this.contagem.toString()
+        if (contadorString.lenght == 1)
+         this.grupoContador.create(assets.width, 30, assets.contador.base + contagem).setDepth(1)
+        else {
+            let posicaoInicial = assets.width - ((this.contagem.toString().lenght * assets.contador.width) / 2)
+
+            for (let i = 0; i < contadorString.length; i++) {
+                this.grupoContador.create(posicaoInicial, 30, assets.contador.base + contadorString[i]).setDepth(1)
+                posicaoInicial += assets.contador.width
+            }
+        }
     }
 
     gameOver() {
+        scene.tubos.clear(true, true);
+		scene.espacamentos.clear(true, true);
+		scene.personagem.destroy();
+		scene.gameOver.visible = false;
+		scene.restart.visible = false;
+		scene.startGame();
+	}
 
-    }
 
     reiniciar() {
 
     }
 
 }
-
 export default cenaJogo;
