@@ -108,11 +108,13 @@ class cenaJogo extends Phaser.Scene {
         this.espacamentos = this.physics.add.group(); // espaço entre os tubos inferiores e superiores
         this.tubos = this.physics.add.group();
 
+    //Contador
+        this.grupoContador = this.physics.add.group();
+
     // Mensagem inicial
         this.inicial = this.add.image(assets.width, assets.height -40, assets.inicial);
         this.inicial.setDepth(4)
         this.inicial.visible = true;
-         //true; ->>> desativei pq tirei a função start do pointerdown, e agora clica e a mensagem não sain ainda hehe
 
     // Mensagem Game Over + restart
         this.gameOver = this.add.image(assets.width, assets.height - 100, assets.fimJogo.gameOver);
@@ -128,6 +130,7 @@ class cenaJogo extends Phaser.Scene {
         
         this.physics.add.collider(this.personagem, this.chao, null, this);
         this.physics.add.overlap(this.personagem, this.tubos, null, this);
+        this.physics.add.overlap(this.personagem, this.espacamentos, this.atualizaContador, null, this);
 
          this.start();
         
@@ -135,19 +138,22 @@ class cenaJogo extends Phaser.Scene {
     } // Você está aqui -> fim da função create   
     
     update() {
+        if (this.jogoIniciado)
+        this.queda();
+
         this.tubos.children.iterate(function(tubo){
 			if (tubo == undefined) return;
 			if (tubo.x < -50) tubo.destroy();
-			else tubo.setVelocityX(-80);
+			else tubo.setVelocityX(-80); // não tão rápido por motivo de criança
 		});
 
 		this.espacamentos.children.iterate(function(espacamento){
-			espacamento.body.setVelocityX(-80);
+			espacamento.body.setVelocityX(-80); 
 		});
 
 		this.proximoTubo++;
 
-		if (this.proximoTubo === 200){
+		if (this.proximoTubo === 200){ // espaçadinho para ter espaço para os powerups :)
 			this.criaTubos();
 			this.proximoTubo = 0;
 		}
@@ -186,14 +192,25 @@ class cenaJogo extends Phaser.Scene {
         this.inicial.visible = false;
         this.chao.anims.play(assets.animacoes.chao.movendo, true);
         // // tá funcionando \o/  mas quero só depois que o jogo realmente tiver começado
+        const contagemInicial = this.grupoContador.create(assets.width, 30, assets.contador.numero0);
+        contagemInicial.setDepth(2);
+        
         this.criaTubos();
 
-    }
-
-
-    queda() {
 
     }
+
+
+    queda() { 
+        if (this.personagem.upwardsVelocity > 0) {
+            this.personagem.upwardsVelocity--
+        } else if (this.personagem.angle < 90){
+            this.personagem.angle += 1;
+            this.personagem.setAngle(this.personagem.angle);
+        }
+    }
+    
+
 
     colisao() {
 
@@ -216,7 +233,11 @@ class cenaJogo extends Phaser.Scene {
         }
     }
 
-    gameOver(){
+    contagem() {
+
+    }
+
+    gameOver() {
 
     }
 
