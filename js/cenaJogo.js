@@ -104,6 +104,10 @@ class cenaJogo extends Phaser.Scene {
     //    this.personagem.angle = -15; // ->> dando erro no console
         // personagem.setBounce(0.2); // // Parâmetro que faz o personagem quicar - Talvez aqui não seja o melhor lugar e talvez nem pr
 
+    // Obstaculos
+        this.espacamentos = this.physics.add.group(); // espaço entre os tubos inferiores e superiores
+        this.tubos = this.physics.add.group();
+
     // Mensagem inicial
         this.inicial = this.add.image(assets.width, assets.height -40, assets.inicial);
         this.inicial.setDepth(4)
@@ -122,8 +126,8 @@ class cenaJogo extends Phaser.Scene {
 
         //Mensagens funcionando :)
         
-
-        
+        this.physics.add.collider(this.personagem, this.chao, null, this);
+        this.physics.add.overlap(this.personagem, this.tubos, null, this);
 
          this.start();
         
@@ -136,7 +140,9 @@ class cenaJogo extends Phaser.Scene {
 
 // Para zerar os elementos do cenário e iniciar a função salto/voo
     start() {
-        
+        this.tuboAtual = assets.tubo;
+        this.proximoTubo = 0;
+
         this.input.on('pointerdown', function () {
             this.salto();
         }, this);
@@ -144,21 +150,63 @@ class cenaJogo extends Phaser.Scene {
         this.inicial.visible = true; // mesmo que deixe na criação como true e aqui como false, na hora que iniciar a função vai seguir visível
         this.gameOver.visible = false;
         this.restart.visible = false;
-        this.fundoDia.visible = true; // meio desnecessário já que só vai ter um fundo. 
+        //this.fundoDia.visible = true; // meio desnecessário já que só vai ter um fundo. 
         
-        this.physics.add.collider(this.personagem, this.chao, null, this);
-        this.physics.add.overlap(this.personagem, this.tubos, null, this);
-        this.chao.anims.play( assets.animacoes.chao.movendo, true );
-    }    
-
+        this.criaTubos();
+    }
+    
     salto() {
+        if (!this.jogoIniciado) { 
+            this.startGame();
+        }
         this.personagem.body.setVelocityY(-300)
         this.personagem.setAngle(-15);
         this.personagem.angle = -15;
         this.personagem.body.allowGravity = true; 
         this.upwardsVelocity = 30;
+    }
+
+    startGame() {
+
+        this.jogoIniciado = true;
+        this.inicial.visible = false;
+        this.chao.anims.play( assets.animacoes.chao.movendo, true);
+        // // tá funcionando \o/  mas quero só depois que o jogo realmente tiver começado
+        this.criaTubos();
 
     }
+
+
+    queda() {
+
+    }
+
+    colisao() {
+
+    }
+
+    criaTubos() {
+        let tSuperior = Phaser.Math.Between(-120, 120);
+        let espacamento = this.add.line(288, tSuperior + 210, 0, 0, 0, 98);
+        this.espacamentos.add(espacamento);
+        espacamento.body.allowGravity = false;
+        espacamento.visible = false;
+
+        let tuboSuperior = this.tubos.create(288, top, this.tuboAtual.superior);
+        tuboSuperior.body.allowGravity = false;
+        let tuboInferior = this.tubos.create(288, top + 420, this.tuboAtual.inferior);
+        tuboInferior.body.allowGravity = false;        
+
+    }
+
+    gameOver(){
+
+    }
+
+    reiniciar() {
+
+    }
+
 }
 
 export default cenaJogo;
