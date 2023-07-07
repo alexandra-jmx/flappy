@@ -15,6 +15,7 @@ const assets = {
     contador: {
         width: 25,
         base: 'number',
+        score: 'score',
         numero0: 'no0',
         numero1: 'no1',
         numero2: 'no2',

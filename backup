@@ -1,3 +1,7 @@
+// com o score
+
+
+
 import assets from './assets.js';
 
 //import personagem from './personagem.js';
@@ -11,47 +15,51 @@ class cenaJogo extends Phaser.Scene {
         let jogo = this;
 
 // Background e chão
-    this.load.image(assets.background, 'assets/background-day.png');
-    this.load.spritesheet(assets.chao, 'assets/ground.png', {
+    this.load.image(assets.background, 'images/background-day.png');
+    this.load.spritesheet(assets.chao, 'images/ground.png', {
         frameWidth: 336,
         frameHeight: 112
     }); 
 
 // Personagem
-    this.load.spritesheet(assets.personagem, 'assets/vivi-boy.png', {
+    this.load.spritesheet(assets.personagem, 'images/vivi-boy.png', {
         frameWidth: 141,
         frameHeight: 126
     }); 
 
 
 // Tubos
-    this.load.image(assets.tubo.inferior, 'assets/pipe-red-bottom.png');
-    this.load.image(assets.tubo.superior, 'assets/pipe-red-top.png');
+    this.load.image(assets.tubo.inferior, 'images/pipe-red-bottom.png');
+    this.load.image(assets.tubo.superior, 'images/pipe-red-top.png');
 
 // PowerUps / Especiais
-    this.load.spritesheet(assets.especiais.healthyFood, 'assets/healthy-food.png', {
-        frameWidth: 16,
-        frameHeight: 16
-    });
-    this.load.spritesheet(assets.especiais.junkFood, 'assets/junk-food.png', {
-        frameWidth: 16,
-        frameHeight: 16
-    });
+    this.load.image(assets.especiais.healthyFood, 'images/healthy-food.png');
+    this.load.image(assets.especiais.junkFood, 'images/junk-food.png');
+// PRECISAR DE UM RESIZE NISSO AQUI - OK :)
     
-// Contador
-    this.load.bitmapFont('font', 'assets/fonts/font.png', 'assets/fonts/font.fnt')
+// // Números do contador
+    this.load.image(assets.contador.numero0, 'images/number0.png');
+    this.load.image(assets.contador.numero1, 'images/number1.png');
+    this.load.image(assets.contador.numero2, 'images/number2.png');
+    this.load.image(assets.contador.numero3, 'images/number3.png');
+    this.load.image(assets.contador.numero4, 'images/number4.png');
+    this.load.image(assets.contador.numero5, 'images/number5.png');
+    this.load.image(assets.contador.numero6, 'images/number6.png');
+    this.load.image(assets.contador.numero7, 'images/number7.png');
+    this.load.image(assets.contador.numero8, 'images/number8.png');
+    this.load.image(assets.contador.numero9, 'images/number9.png');
+this.load.bitmapFont('font', 'fonts/font.png', 'fonts/font.fnt')
 
 // Mensagem inicial      
 
-    this.load.image(assets.inicial, 'assets/message-initial.png');
+    this.load.image(assets.inicial, 'images/message-initial.png');
 
 // Fim de Jogo
-     this.load.image(assets.fimJogo.gameOver, 'assets/gameover.png');
-     this.load.image(assets.fimJogo.restart, 'assets/restart-button.png');
+     this.load.image(assets.fimJogo.gameOver, 'images/gameover.png');
+     this.load.image(assets.fimJogo.restart, 'images/restart-button.png');
 
-// // Sons
-//     this.load.audio('caindo', 'assets/audio/die.wav');
-//     this.load.audio('contagem', 'assets/audio/point.wav');
+
+
 
 } // Você está aqui -> fim da função preload   
 
@@ -66,7 +74,9 @@ class cenaJogo extends Phaser.Scene {
         this.chao = this.physics.add.sprite(assets.width, 468, assets.chao);
 		this.chao.setCollideWorldBounds(true);
 		this.chao.setDepth(3);
-		this.chao.setSize(0, 100, 0, 0).setOffset(0, 5); // Área para colisão. 
+		this.chao.setSize(0, 100, 0, 0).setOffset(0, 5); // Área para colisão. Não sei se precisaria, se somente a altura do personagem em y não seria o suficiente.
+        // Acho que vai precisar sim, pq se não fica com espaçamento muito grande do chão :(. Alterei de 10 para 5)
+
         this.anims.create({ key: assets.animacoes.chao.movendo, 
 			frames: this.anims.generateFrameNumbers(assets.chao, {
 				start: 0,
@@ -84,12 +94,35 @@ class cenaJogo extends Phaser.Scene {
 			frameRate: 20
 		});
 
+    // Personagem
+        this.personagem = this.physics.add.sprite(60, 270, assets.personagem).setScale(0.3);
+        this.personagem.body.allowGravity = false;
+        this.personagem.body.setCollideWorldBounds(true);
+        this.personagem.setDepth(1);
+        // Impede que a sprite do jogador saia da tela / 
+        this.personagem.upwardsVelocity = 0
+        // personagem.setBounce(0.2); // // Parâmetro que faz o personagem quicar - Talvez aqui não seja o melhor lugar e talvez nem pr
+
     // Obstaculos
         this.espacamentos = this.physics.add.group(); // espaço entre os tubos inferiores e superiores
         this.tubos = this.physics.add.group();
 
     // Especiais
         this.especiais = this.physics.add.group();
+
+    // Contador
+    this.scoreboardGroup = this.physics.add.staticGroup()
+    //     this.grupoContador = this.physics.add.staticGroup();
+    //     // this.grupoContador.setImmovable(true); -> deu ruim
+
+        // this.score = {
+        //     pts: 0,
+        //     textObject: this.add.bitmapText(assets.width, 20, 'font', '0', 40)
+        // };
+        // this.score.textObject.setDepth(4);
+
+        // this.zonesScore = this.physics.add.group();
+        // this.physics.add.overlap(this.personagem, this.zonesScore, this.incrementScore, null, this);
 
     // Mensagem inicial
         this.inicial = this.add.image(assets.width, assets.height -40, assets.inicial).setScale(1.1);
@@ -104,52 +137,19 @@ class cenaJogo extends Phaser.Scene {
         this.restart = this.add.image(assets.width, assets.height + 50, assets.fimJogo.restart).setInteractive(); // pq vai ser clicável
         this.restart.setDepth(3);
         this.restart.visible = false;
-        this.restart.on('pointerdown', () => this.reiniciar(this));
+
+        //Mensagens funcionando :)
         
-    // Score/Contador
+        this.physics.add.collider(this.personagem, this.chao, /*this.especiais,*/ this.colisao, null, this);
+        this.physics.add.overlap(this.personagem, this.tubos, /*this.especiais,*/ this.colisao, null, this);
+        this.physics.add.overlap(this.personagem, this.espacamentos, this.up, null, this);
+        this.physics.add.overlap(this.personagem, this.espacamentos, this.updateScore, null, this)
+        this.physics.add.overlap(this.personagem, this.especiais, this.coletaEspeciais, null, this)
+        this.physics.add.overlap(this.personagem, this.espacamentos, this.tubos, this.updateScore, null, this)
 
-		this.scoreboard = this.add.image(assets.contador.width, 200, assets.contador.score);
-		this.scoreboard.scale = 0.5;
-		this.scoreboard.setDepth(30);
-
-		this.scoreTxt = this.add.text(assets.width, 40, '0', { 
-					fontFamily: 'font1', 
-					fontSize: '38px', 
-					fill: '#fff', 
-					stroke: '#000',
-					strokeThickness: 4,
-					strokeLinecap: 'square',
-					shadow: {
-						offsetX: 2.5,
-						offsetY: 3,
-						color: '#000',
-						blur: 0,
-						stroke: true,
-						fill: true
-					}
-		});
-
-		this.scoreTxt.setDepth(30);
-		this.scoreTxt.setOrigin(0.5);
-		this.scoreTxt.alpha = 0;
-
-		this.scored = this.add.text(assets.width+5, 186, 
-			'0', { 
-					fontFamily: 'font1', 
-					fontSize: '18px', 
-					fill: '#fff', 
-					stroke: '#000',
-					strokeThickness: 3,
-				}
-			);
-		this.scored.setDepth(30);
-		this.scored.setOrigin(0.5);
-
-    // // Sons
-    //     this.audioCaindo = scene.sound.add('caindo');
-    //     this.audioContagem = scene.sound.add('contagem');
-
-        this.preJogo();   
+        this.preJogo();
+        
+         //this.time.addEvent ({ delay: 5000, callback: this.deletePipes, callbackScope: this, loop: true });     
 
     } // Você está aqui -> fim da função create   
     
@@ -187,28 +187,25 @@ class cenaJogo extends Phaser.Scene {
 		if (this.proximoEspecial === 300){ // espaçadinho para ter espaço para os powerups :)
 			this.criaEspeciais();
 			this.proximoEspecial = 0;
+
+        // this.zonesScore.getChildren().forEach((zoneScore) => {
+        //     zoneScore.x -= 2.5;
+        // });
 		}
     } // Você está aqui -> fim da função update   
 
 // Para zerar os elementos do cenário e iniciar a função salto/voo
     preJogo() {
-        //if (!this.jogoIniciado)
+        if (!this.jogoIniciado)
         this.proximoTubo = 0;
         this.proximoEspecial = 0;
         this.score = 0;
-        this.jogoTerminado = false;
 
-        if (!this.jogoIniciado){ 
-            this.personagem = this.physics.add.sprite(60, 270, assets.personagem).setScale(0.3);
-            this.personagem.body.allowGravity = false;
-            this.personagem.body.setCollideWorldBounds(true);
-            this.personagem.setDepth(1);
-            this.personagem.upwardsVelocity = 0
-            this.poderes = false;
-        }
+        this.personagem.body.reset(60, 265);
         this.personagem.setAngle(0); 
 
         this.input.on('pointerdown', function () {
+            //this.personagem.visible = false;
             this.salto();
         }, this);
 
@@ -216,16 +213,7 @@ class cenaJogo extends Phaser.Scene {
         this.inicial.visible = true; // mesmo que deixe na criação como true e aqui como false, na hora que iniciar a função vai seguir visível
         
         this.gameOver.visible = false;
-        this.scoreboard.visible = false;
-		this.scored.visible = false;
         this.restart.visible = false; 
-        this.tuboAtual = assets.tubo;
-
-        this.physics.add.collider(this.personagem, this.chao, this.colisao, null, this);
-        this.physics.add.overlap(this.personagem, this.tubos, this.colisao, null, this);
-        this.physics.add.overlap(this.personagem, this.espacamentos, this.up, null, this);
-        this.physics.add.overlap(this.personagem, this.espacamentos, this.updateScore, null, this)
-        this.physics.add.collider(this.personagem, this.especiais, this.coletaEspeciais, null, this)
     }
     
     salto() {
@@ -243,19 +231,20 @@ class cenaJogo extends Phaser.Scene {
     }
 
     startGame() {
-        this.scoreTxt.alpha = 1;
+
         this.jogoIniciado = true;
         this.inicial.visible = false;
         this.chao.anims.play(assets.animacoes.chao.movendo, true);
+        let score = 0;
+        
+        const contagemInicial = this.scoreboardGroup.create(assets.width, 30, assets.contador.numero0);
+        contagemInicial.setDepth(2);
         
         this.criaTubos();
         this.criaEspeciais();
-        
-        //Outra tentativa do contador. 
-        // const contagemInicial = this.grupoContador.create(assets.width, 30, assets.contador.numero0);
-        // contagemInicial.setDepth(2);
-    }
+        this.coletaEspeciais();
 
+    }
 
     queda() { 
         if (this.personagem.upwardsVelocity > 0) {
@@ -287,8 +276,10 @@ class cenaJogo extends Phaser.Scene {
 		this.chao.anims.stop(assets.animacoes.chao.movendo, false);
 		this.gameOver.visible = true;
 		this.restart.visible = true;
-        this.scoreTxt.setText('');
-
+        //this.scoreTxt.setText('');
+        this.restart.on('pointerdown', function () {
+            this.reiniciar();
+        }, this);
 
 	}
 
@@ -315,66 +306,52 @@ class cenaJogo extends Phaser.Scene {
         let especialRandom =  Phaser.Math.RND.pick([assets.especiais.healthyFood, assets.especiais.junkFood]);
         
         let especialPosicaoY = Phaser.Math.Between(150, 350);
-        let especial = this.especiais.create(410, especialPosicaoY, especialRandom).setScale(1.8);
-                this.especial = especial.body.allowGravity = false
+        let especial = this.especiais.create(410, especialPosicaoY, especialRandom)
+                especial.body.allowGravity = false
+                especial.setScale(1.8);
+            }
+        }
+        coletaEspeciais(){
+            this.especial.disableBody(true, true);
+    }
+
+
+    updateScore() {
+        this.score++
+
+        this.updateScoreboard();
+    
+    }
+
+    updateScoreboard() {
+        this.scoreboardGroup.clear(true, true)
+    
+        const scoreAsString = this.score.toString()
+        if (scoreAsString.length == 1)
+            this.scoreboardGroup.create(assets.width, 30, assets.contador.base + this.score).setDepth(10)
+        else {
+            let initialPosition = assets.scene.width - ((score.toString().length * assets.contador.width) / 2)
+    
+            for (let i = 0; i < scoreAsString.length; i++) {
+                scoreboardGroup.create(initialPosition, 30, assets.contador.base + scoreAsString[i]).setDepth(10)
+                initialPosition += assets.contador.width
+            }
         }
     }
-    coletaEspeciais(_, especial){
-        especial.disableBody(true, true);
 
-        this.poderes = true;
-        const duracao = 5000
-
-        if (especial === assets.especiais.junkFood){ 
-            this.efeitoPesado();
-        } else if (especial === assets.especiais.healthyFood) {
-            this.efeitoSaudavel();
-        } 
-    }
-
-    efeitoSaudavel() {
-        const collider = this.physics.add.collider(this.personagem, this.tubos, null, () =>
-        {
-            this.physics.world.removeCollider(collider);
-        });
-
-        setTimeout(function() {}, 5000);
-        //this.physics.remove.collider(this.personagem, this.tubos, this.colisao, null, this);
-    }
-
-    efeitoPesado() {
-        this.personagem.body.mass(500);
-        this.personagem.setGravity(1000);
-        setTimeout(function() {}, 5000);
-    }
-
-    eliminaPoderes(_,duracao){
-        clearTimeout(duracao);
-        this.poderes = false;
-
-    }
-
-    updateScore(_, espacamento){
-        this.score++;
-        espacamento.destroy();
-
-        this.scoreTxt.setText(this.score);
-    }
-
-    reiniciar(scene) {
-        scene.tubos.clear(true, true);
-        scene.espacamentos.clear(true, true);
-        scene.especiais.clear(true, true);
-        scene.personagem.destroy();
-        scene.scoreboard.visible = false;
+    reiniciar() {
+    
+        this.tubos.clear(true, true);
+        this.espacamentos.clear(true, true);
+        this.especiais.clear(true, true);
+        scoreboardGroup.clear(true, true)
 		//this.personagem.destroy();
         // this.grupoContador.clear(true, true)
 		// this.personagem.body.reset(60, 265);
         // this.personagem.setAngle(0); 
-		scene.gameOver.visible = false;
-		scene.restart.visible = false;
-        scene.scoreTxt.setText('0');
-        scene.preJogo();
+		this.gameOver.visible = false;
+		this.restart.visible = false;
+       // this.scoreTxt.setText('0');
 	    //this.game.scene.start(this.preJogo())
 	}
 
