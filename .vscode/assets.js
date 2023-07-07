@@ -16,7 +16,16 @@ const assets = {
         width: 25,
         base: 'number',
         score: 'score',
-
+        // numero0: 'no0',
+        // numero1: 'no1',
+        // numero2: 'no2',
+        // numero3: 'no3',
+        // numero4: 'no4',
+        // numero5: 'no5',
+        // numero6: 'no6',
+        // numero7: 'no7',
+        // numero8: 'no8',
+        // numero9: 'no9',
     },
     inicial: 'mensagem.inicial',
     fimJogo: {

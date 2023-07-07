@@ -13,7 +13,7 @@ window.onload = function() {
                 gravity: {
                     y: 600
                 },
-                debug: false // Lembrar de desativar na versão final :)
+                debug: false 
             }
         },
         scene: [ cenaJogo ]
@@ -22,23 +22,6 @@ window.onload = function() {
     // Criando o jogo
     const jogo = new Phaser.Game(config);
 }
-
-
-
-/** FALTA:
- * 
- ** Criar
- * - Função para coleta dos especiais
- * - função de efeito de cada especial por x segundos(?)
- * 
- * Ajustar
- * - Contador 
- * - Atualização do contadorr 
- * - a mensagem de game over parou de aparecer D: (ok)
- * - Ajustar a posição onde os especiais são criados (ok)
- * - Ajustar a crianção deg
-*/
-
 
 
 

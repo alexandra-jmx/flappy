@@ -49,7 +49,12 @@ class cenaJogo extends Phaser.Scene {
      this.load.image(assets.fimJogo.gameOver, 'assets/gameover.png');
      this.load.image(assets.fimJogo.restart, 'assets/restart-button.png');
 
-} 
+// // Sons
+//     this.load.audio('caindo', 'assets/audio/die.wav');
+//     this.load.audio('contagem', 'assets/audio/point.wav');
+
+} // Você está aqui -> fim da função preload   
+
 
     create () {
         let jogo = this;
@@ -102,6 +107,7 @@ class cenaJogo extends Phaser.Scene {
         this.restart.on('pointerdown', () => this.reiniciar(this));
         
     // Score/Contador
+
 		this.scoreboard = this.add.image(assets.contador.width, 200, assets.contador.score);
 		this.scoreboard.scale = 0.5;
 		this.scoreboard.setDepth(30);
@@ -139,9 +145,13 @@ class cenaJogo extends Phaser.Scene {
 		this.scored.setDepth(30);
 		this.scored.setOrigin(0.5);
 
+    // // Sons
+    //     this.audioCaindo = scene.sound.add('caindo');
+    //     this.audioContagem = scene.sound.add('contagem');
+
         this.preJogo();   
 
-    }
+    } // Você está aqui -> fim da função create   
     
     update() {
         if (!this.jogoIniciado) return
@@ -174,11 +184,11 @@ class cenaJogo extends Phaser.Scene {
 
 		this.proximoEspecial++;
 
-		if (this.proximoEspecial === 425){ // espaçadinho para ter espaço para os powerups :)
+		if (this.proximoEspecial === 300){ // espaçadinho para ter espaço para os powerups :)
 			this.criaEspeciais();
 			this.proximoEspecial = 0;
 		}
-    }  
+    } // Você está aqui -> fim da função update   
 
 // Para zerar os elementos do cenário e iniciar a função salto/voo
     preJogo() {
@@ -240,6 +250,10 @@ class cenaJogo extends Phaser.Scene {
         
         this.criaTubos();
         this.criaEspeciais();
+        
+        //Outra tentativa do contador. 
+        // const contagemInicial = this.grupoContador.create(assets.width, 30, assets.contador.numero0);
+        // contagemInicial.setDepth(2);
     }
 
 
@@ -274,6 +288,8 @@ class cenaJogo extends Phaser.Scene {
 		this.gameOver.visible = true;
 		this.restart.visible = true;
         this.scoreTxt.setText('');
+
+
 	}
 
     criaTubos() {
@@ -301,8 +317,7 @@ class cenaJogo extends Phaser.Scene {
         let especialPosicaoY = Phaser.Math.Between(150, 350);
         let especial = this.especiais.create(410, especialPosicaoY, especialRandom).setScale(1.8);
                 this.especial = especial.body.allowGravity = false
-            }
-
+        }
     }
     coletaEspeciais(_, especial){
         especial.disableBody(true, true);
@@ -310,12 +325,11 @@ class cenaJogo extends Phaser.Scene {
         this.poderes = true;
         const duracao = 5000
 
-        if (especial = assets.especiais.junkFood){ 
+        if (especial === assets.especiais.junkFood){ 
             this.efeitoPesado();
-        } else if (especial = assets.especiais.healthyFood) {
+        } else if (especial === assets.especiais.healthyFood) {
             this.efeitoSaudavel();
         } 
-        //this.efeitoPesado();
     }
 
     efeitoSaudavel() {
@@ -329,10 +343,9 @@ class cenaJogo extends Phaser.Scene {
     }
 
     efeitoPesado() {
-        //this.personagem.setMass(500);
-        //this.personagem.setGravity(100);
-        this.personagem.setVelocityY(100);
-        setTimeout(function() {}, 3000);
+        this.personagem.body.mass(500);
+        this.personagem.setGravity(1000);
+        setTimeout(function() {}, 5000);
     }
 
     eliminaPoderes(_,duracao){
@@ -354,10 +367,15 @@ class cenaJogo extends Phaser.Scene {
         scene.especiais.clear(true, true);
         scene.personagem.destroy();
         scene.scoreboard.visible = false;
+		//this.personagem.destroy();
+        // this.grupoContador.clear(true, true)
+		// this.personagem.body.reset(60, 265);
+        // this.personagem.setAngle(0); 
 		scene.gameOver.visible = false;
 		scene.restart.visible = false;
         scene.scoreTxt.setText('0');
         scene.preJogo();
+	    //this.game.scene.start(this.preJogo())
 	}
 
 }
