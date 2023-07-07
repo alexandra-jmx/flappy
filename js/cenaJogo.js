@@ -23,8 +23,8 @@ class cenaJogo extends Phaser.Scene {
     *  - Alterar os frames
     * */
     this.load.spritesheet(assets.personagem, 'images/vivi-boy.png', {
-        frameWidth: 34,
-        frameHeight: 24
+        frameWidth: 141,
+        frameHeight: 126
     }); 
 
 
@@ -50,9 +50,7 @@ class cenaJogo extends Phaser.Scene {
     this.load.image(assets.contador.numero9, 'images/number9.png');
 
 // Mensagem inicial      
-/** TODO
- * - Alterar para imagem inicial com novo personagem
- * - Confirmar se tem como colocar em svg para melhorar a qualidade ->> tem como usar uma função de load antes e depois meio que converte em imagem :) */
+
     this.load.image(assets.inicial, 'images/message-initial.png');
 
 // Fim de Jogo
@@ -96,13 +94,12 @@ class cenaJogo extends Phaser.Scene {
 		});
 
     // Personagem
-        this.personagem = this.physics.add.sprite(60, 265, assets.personagem);
+        this.personagem = this.physics.add.sprite(60, 270, assets.personagem).setScale(0.3);
         this.personagem.body.allowGravity = false;
         this.personagem.body.setCollideWorldBounds(true);
         this.personagem.setDepth(1);
         // Impede que a sprite do jogador saia da tela / 
         this.personagem.upwardsVelocity = 0
-    //    this.personagem.angle = -15; // ->> dando erro no console
         // personagem.setBounce(0.2); // // Parâmetro que faz o personagem quicar - Talvez aqui não seja o melhor lugar e talvez nem pr
 
     // Obstaculos
@@ -117,7 +114,7 @@ class cenaJogo extends Phaser.Scene {
         // this.grupoContador.setImmovable(true); -> deu ruim
 
     // Mensagem inicial
-        this.inicial = this.add.image(assets.width, assets.height -40, assets.inicial);
+        this.inicial = this.add.image(assets.width, assets.height -40, assets.inicial).setScale(1.1);
         this.inicial.setDepth(4)
         this.inicial.visible = true;
 
