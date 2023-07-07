@@ -250,6 +250,11 @@ class cenaJogo extends Phaser.Scene {
 			tubo.setVelocityX(0);
 		});
 
+        this.especiais.children.iterate(function(especial){
+			if (especial == undefined) return;
+			especial.setVelocityX(0);
+		});
+        
 		this.jogoTerminado = true;
 		this.jogoIniciado = false;
 
