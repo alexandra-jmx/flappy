@@ -186,6 +186,7 @@ class cenaJogo extends Phaser.Scene {
 // Para zerar os elementos do cenário e iniciar a função salto/voo
     start() {
         this.proximoTubo = 0;
+        this.proximoEspecial = 0;
 
         this.input.on('pointerdown', function () {
             this.salto();
@@ -194,6 +195,7 @@ class cenaJogo extends Phaser.Scene {
         this.inicial.visible = true; // mesmo que deixe na criação como true e aqui como false, na hora que iniciar a função vai seguir visível
         this.gameOver.visible = false;
         this.restart.visible = false;
+        
         
         
 
@@ -207,11 +209,13 @@ class cenaJogo extends Phaser.Scene {
             this.startGame();
         }
         
-        this.personagem.body.setVelocityY(-200)
-        this.personagem.setAngle(-15);
-        this.personagem.angle = -15;
-        this.personagem.body.allowGravity = true; 
-        this.upwardsVelocity = 30;
+        if (!this.jogoTerminado) {
+            this.personagem.body.setVelocityY(-200)
+            this.personagem.setAngle(-15);
+            this.personagem.angle = -15;
+            this.personagem.body.allowGravity = true; 
+            this.upwardsVelocity = 30;
+        }
     }
 
     startGame() {
@@ -329,7 +333,10 @@ class cenaJogo extends Phaser.Scene {
     
         this.tubos.clear(true, true);
         this.espacamentos.clear(true, true);
-		this.personagem.destroy();
+        this.especiais.clear(true, true);
+		//this.personagem.destroy();
+		this.personagem.body.reset(60, 265);
+        this.personagem.setAngle(0); 
 		this.gameOver.visible = false;
 		this.restart.visible = false;
 		this.start();
