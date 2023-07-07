@@ -1,4 +1,3 @@
-
 const assets = {
     width: 144, //metade da largura do jogo
     height: 256, // metade da altura do jogo para auxiliar no posicionamento

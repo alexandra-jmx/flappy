@@ -26,9 +26,6 @@ window.onload = function() {
 
 
 /** FALTA:
- * - Trocar a imagem do personagem
- * - Trocar a mensagem inicial para qualidade maior
- * - função de converter de svg para imagem
  * 
  ** Criar
  * - Função para coleta dos especiais
@@ -36,12 +33,12 @@ window.onload = function() {
  * 
  * Ajustar
  * - Contador 
- * - Atualização do contador
- * - Funcionamento do votão de restart
- * - O personagem segue saltando depois de cair 
+ * - Atualização do contadorr 
  * - a mensagem de game over parou de aparecer D: (ok)
  * - Ajustar a posição onde os especiais são criados (ok)
  * - Ajustar a crianção deg
 */
+
+
 
 
